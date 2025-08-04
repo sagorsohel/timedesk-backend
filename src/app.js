@@ -12,6 +12,10 @@ app.use(morgan("dev"));
 // Routes
 // app.use("/api/users", userRoutes);
 
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
+
 // Global Error Handler
 // app.use(globalErrorHandler);
 
