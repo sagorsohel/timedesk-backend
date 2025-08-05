@@ -53,4 +53,4 @@ function getDefaultRoutines() {
   });
 }
 
-module.exports = { getDefaultRoutines };
+export default getDefaultRoutines

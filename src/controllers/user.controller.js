@@ -1,4 +1,6 @@
+import { UserRoutine } from "../models/routine.model.js";
 import { User } from "../models/user.model.js";
+import getDefaultRoutines from "../utils/defaultRoutines.js";
 import { sendError, sendSuccess } from "../utils/response.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -22,6 +24,13 @@ export const signUp = async (req, res) => {
 
     // Create user
     const user = await User.create({ name, email, password: hashedPassword });
+
+    // 3. Create default routines
+    const defaultRoutines = getDefaultRoutines();
+    await UserRoutine.create({
+      userId: user._id,
+      routines: defaultRoutines,
+    });
 
     return sendSuccess(res, 201, "User created successfully", {
       id: user._id,

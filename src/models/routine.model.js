@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
-// models/UserRoutine.js
-const mongoose = require("mongoose");
+
 
 const RoutineItemSchema = new mongoose.Schema({
   id: Number,
@@ -26,4 +25,4 @@ const UserRoutineSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("UserRoutine", UserRoutineSchema);
+export const UserRoutine = mongoose.model("Routine", UserRoutineSchema);
