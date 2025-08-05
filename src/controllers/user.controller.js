@@ -72,6 +72,7 @@ export const login = async (req, res) => {
 
     return sendSuccess(res, 200, "Login successful", { token, userData });
   } catch (error) {
+    console.log(error)
     return sendError(res, 500, error.message);
   }
 };
