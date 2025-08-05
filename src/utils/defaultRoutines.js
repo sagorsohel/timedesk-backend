@@ -1,4 +1,3 @@
-// utils/defaultRoutines.js
 function parseDurationToSeconds(duration) {
   const regex =
     /(\d+)\s*(h|hr|hrs|hour|hours|m|min|mins|minute|minutes|s|sec|secs|second|seconds)?/gi;
@@ -44,7 +43,6 @@ function getDefaultRoutines() {
     return {
       id: Date.now() + index,
       name: item.name,
-      duration: item.duration,
       originalDurationSeconds: seconds,
       remainingSeconds: seconds,
       isRunning: false,
@@ -53,4 +51,4 @@ function getDefaultRoutines() {
   });
 }
 
-export default getDefaultRoutines
+export default getDefaultRoutines;
