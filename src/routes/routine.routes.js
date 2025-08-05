@@ -8,7 +8,7 @@ import {
 const routineRouter = express.Router();
 
 routineRouter.get("/get-routines", getRoutines);
-routineRouter.post("/create-routine", createRoutine);
+routineRouter.post("/create", createRoutine);
 routineRouter.patch("/update-timer", updateRoutineTimer);
 
 export default routineRouter;
