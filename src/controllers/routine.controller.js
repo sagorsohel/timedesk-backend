@@ -138,7 +138,7 @@ export const updateRoutine = async (req, res) => {
 };
 export const deleteRoutine = async (req, res) => {
     const userId = req.user._id;
-    const  {_id}  = req.params;
+    const { _id } = req.params;
   
     if (!_id || !mongoose.Types.ObjectId.isValid(_id)) {
       return sendError(res, 400, "Valid routine _id is required");
@@ -150,13 +150,14 @@ export const deleteRoutine = async (req, res) => {
         return sendError(res, 404, "User routines not found");
       }
   
+      // Check if routine exists
       const routine = userRoutine.routines.id(_id);
       if (!routine) {
         return sendError(res, 404, "Routine not found");
       }
   
-      // Remove the routine from the array
-      routine.remove();
+      // ✅ Use pull instead of remove
+      userRoutine.routines.pull({ _id });
   
       await userRoutine.save();
   
