@@ -55,42 +55,84 @@ export const createRoutine = async (req, res) => {
   }
 };
 export const updateRoutineTimer = async (req, res) => {
-    const userId = req.user._id;
-    const { _id, remainingSeconds, isFinished, isRunning } = req.body;
-  
-    if (!_id || !mongoose.Types.ObjectId.isValid(_id)) {
-      return sendError(res, 400, "Valid routine _id is required");
+  const userId = req.user._id;
+  const { _id, remainingSeconds, isFinished, isRunning } = req.body;
+
+  if (!_id || !mongoose.Types.ObjectId.isValid(_id)) {
+    return sendError(res, 400, "Valid routine _id is required");
+  }
+
+  try {
+    const userRoutine = await UserRoutine.findOne({ userId });
+    if (!userRoutine) {
+      return sendError(res, 404, "User routines not found");
     }
-  
-    try {
-      const userRoutine = await UserRoutine.findOne({ userId });
-      if (!userRoutine) {
-        return sendError(res, 404, "User routines not found");
-      }
-  
-      // Find routine by MongoDB ObjectId
-      const routine = userRoutine.routines.id(_id);
-      if (!routine) {
-        return sendError(res, 404, "Routine not found");
-      }
-  
-      // Update fields
-      if (typeof remainingSeconds === "number") {
-        routine.remainingSeconds = remainingSeconds;
-      }
-  
-      if (typeof isFinished === "boolean") {
-        routine.isFinished = isFinished;
-      }
-  
-      if (typeof isRunning === "boolean") {
-        routine.isRunning = isRunning;
-      }
-  
-      await userRoutine.save();
-  
-      return sendSuccess(res, 200, "Routine updated successfully", routine);
-    } catch (error) {
-      return sendError(res, 500, error.message);
+
+    // Find routine by MongoDB ObjectId
+    const routine = userRoutine.routines.id(_id);
+    if (!routine) {
+      return sendError(res, 404, "Routine not found");
     }
-  };
+
+    // Update fields
+    if (typeof remainingSeconds === "number") {
+      routine.remainingSeconds = remainingSeconds;
+    }
+
+    if (typeof isFinished === "boolean") {
+      routine.isFinished = isFinished;
+    }
+
+    if (typeof isRunning === "boolean") {
+      routine.isRunning = isRunning;
+    }
+
+    await userRoutine.save();
+
+    return sendSuccess(res, 200, "Routine updated successfully", routine);
+  } catch (error) {
+    return sendError(res, 500, error.message);
+  }
+};
+
+export const updateRoutine = async (req, res) => {
+  const userId = req.user._id;
+  const { _id, name, originalDurationSeconds } = req.body;
+
+  // Validate routine ID
+  if (!_id || !mongoose.Types.ObjectId.isValid(_id)) {
+    return sendError(res, 400, "Valid routine _id is required");
+  }
+
+  try {
+    // Find user's routines
+    const userRoutine = await UserRoutine.findOne({ userId });
+    if (!userRoutine) {
+      return sendError(res, 404, "User routines not found");
+    }
+
+    // Find the specific routine
+    const routine = userRoutine.routines.id(_id);
+    if (!routine) {
+      return sendError(res, 404, "Routine not found");
+    }
+
+    // Update fields
+    if (typeof name === "string") {
+      routine.name = name;
+    }
+
+    if (typeof originalDurationSeconds === "number") {
+      routine.originalDurationSeconds = originalDurationSeconds;
+      // Optional: also update remainingSeconds if you want it to reset
+      routine.remainingSeconds = originalDurationSeconds;
+    }
+
+    await userRoutine.save();
+
+    return sendSuccess(res, 200, "Routine updated successfully", routine);
+  } catch (error) {
+    console.error("Update routine error:", error);
+    return sendError(res, 500, error.message);
+  }
+};
