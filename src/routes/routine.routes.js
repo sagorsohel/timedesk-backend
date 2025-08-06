@@ -13,6 +13,6 @@ routineRouter.get("/get-routines", getRoutines);
 routineRouter.post("/create", createRoutine);
 routineRouter.patch("/update-timer", updateRoutineTimer);
 routineRouter.patch("/update", updateRoutine);
-routineRouter.patch("/delete", deleteRoutine);
+routineRouter.patch("/delete:id", deleteRoutine);
 
 export default routineRouter;

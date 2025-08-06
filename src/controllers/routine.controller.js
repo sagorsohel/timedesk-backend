@@ -138,7 +138,7 @@ export const updateRoutine = async (req, res) => {
 };
 export const deleteRoutine = async (req, res) => {
     const userId = req.user._id;
-    const { _id } = req.body;
+    const  {_id}  = req.params;
   
     if (!_id || !mongoose.Types.ObjectId.isValid(_id)) {
       return sendError(res, 400, "Valid routine _id is required");
