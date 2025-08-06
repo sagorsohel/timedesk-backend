@@ -136,3 +136,34 @@ export const updateRoutine = async (req, res) => {
     return sendError(res, 500, error.message);
   }
 };
+export const deleteRoutine = async (req, res) => {
+    const userId = req.user._id;
+    const { _id } = req.body;
+  
+    if (!_id || !mongoose.Types.ObjectId.isValid(_id)) {
+      return sendError(res, 400, "Valid routine _id is required");
+    }
+  
+    try {
+      const userRoutine = await UserRoutine.findOne({ userId });
+      if (!userRoutine) {
+        return sendError(res, 404, "User routines not found");
+      }
+  
+      const routine = userRoutine.routines.id(_id);
+      if (!routine) {
+        return sendError(res, 404, "Routine not found");
+      }
+  
+      // Remove the routine from the array
+      routine.remove();
+  
+      await userRoutine.save();
+  
+      return sendSuccess(res, 200, "Routine deleted successfully");
+    } catch (error) {
+      console.error("❌ Error deleting routine:", error);
+      return sendError(res, 500, error.message);
+    }
+  };
+  

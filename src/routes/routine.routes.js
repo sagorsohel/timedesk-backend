@@ -3,7 +3,8 @@ import {
   getRoutines,
   createRoutine,
   updateRoutineTimer,
-  updateRoutine
+  updateRoutine,
+  deleteRoutine
 } from "../controllers/routine.controller.js";
 
 const routineRouter = express.Router();
@@ -12,5 +13,6 @@ routineRouter.get("/get-routines", getRoutines);
 routineRouter.post("/create", createRoutine);
 routineRouter.patch("/update-timer", updateRoutineTimer);
 routineRouter.patch("/update", updateRoutine);
+routineRouter.patch("/delete", deleteRoutine);
 
 export default routineRouter;
