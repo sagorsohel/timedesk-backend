@@ -97,19 +97,28 @@ export function computeStats(userRoutine) {
  * Small textual SVG badge
  */
 export function buildBadgeSVG({ totalHours, todayHours, longestDayHours }) {
-    const width = 420;
-    const height = 64;
+    const width = 600;
+    const height = 100;
     return `<?xml version="1.0" encoding="utf-8"?>
   <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-    <rect width="${width}" height="${height}" rx="6" fill="#e6f4fd"/>
-    <text x="14" y="22" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="13">Total hours</text>
-    <text x="14" y="44" fill="#e2008d" font-family="Arial, Helvetica, sans-serif" font-size="18">${totalHours}h</text>
+    <!-- Background -->
+    <rect width="${width}" height="${height}" rx="10" fill="#e6f4fd"/>
   
-    <text x="170" y="22" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="13">Today</text>
-    <text x="170" y="44" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="18">${todayHours}h</text>
+    <!-- Vertical separators -->
+    <line x1="200" y1="20" x2="200" y2="80" stroke="#2d4797" stroke-width="1"/>
+    <line x1="400" y1="20" x2="400" y2="80" stroke="#2d4797" stroke-width="1"/>
   
-    <text x="300" y="22" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="13">Longest day</text>
-    <text x="300" y="44" fill="#fde6c2" font-family="Arial, Helvetica, sans-serif" font-size="18">${longestDayHours}h</text>
+    <!-- Total Hours -->
+    <text x="100" y="45" text-anchor="middle" fill="#e2008d" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="bold">${totalHours}h</text>
+    <text x="100" y="65" text-anchor="middle" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="14">Total Hours</text>
+  
+    <!-- Today -->
+    <text x="300" y="45" text-anchor="middle" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="bold">${todayHours}h</text>
+    <text x="300" y="65" text-anchor="middle" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="14">Today</text>
+  
+    <!-- Longest Day -->
+    <text x="500" y="45" text-anchor="middle" fill="#fde6c2" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="bold">${longestDayHours}h</text>
+    <text x="500" y="65" text-anchor="middle" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="14">Longest Day</text>
   </svg>`;
   }
   
