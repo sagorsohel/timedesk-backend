@@ -97,21 +97,22 @@ export function computeStats(userRoutine) {
  * Small textual SVG badge
  */
 export function buildBadgeSVG({ totalHours, todayHours, longestDayHours }) {
-  const width = 420;
-  const height = 64;
-  return `<?xml version="1.0" encoding="utf-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-  <rect width="${width}" height="${height}" rx="6" fill="#0d1117"/>
-  <text x="14" y="22" fill="#adbac7" font-family="Arial, Helvetica, sans-serif" font-size="13">Total hours</text>
-  <text x="14" y="44" fill="#0ea5a4" font-family="Arial, Helvetica, sans-serif" font-size="18">${totalHours}h</text>
-
-  <text x="170" y="22" fill="#adbac7" font-family="Arial, Helvetica, sans-serif" font-size="13">Today</text>
-  <text x="170" y="44" fill="#7dd3fc" font-family="Arial, Helvetica, sans-serif" font-size="18">${todayHours}h</text>
-
-  <text x="300" y="22" fill="#adbac7" font-family="Arial, Helvetica, sans-serif" font-size="13">Longest day</text>
-  <text x="300" y="44" fill="#c7a5ff" font-family="Arial, Helvetica, sans-serif" font-size="18">${longestDayHours}h</text>
-</svg>`;
-}
+    const width = 420;
+    const height = 64;
+    return `<?xml version="1.0" encoding="utf-8"?>
+  <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+    <rect width="${width}" height="${height}" rx="6" fill="#e6f4fd"/>
+    <text x="14" y="22" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="13">Total hours</text>
+    <text x="14" y="44" fill="#e2008d" font-family="Arial, Helvetica, sans-serif" font-size="18">${totalHours}h</text>
+  
+    <text x="170" y="22" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="13">Today</text>
+    <text x="170" y="44" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="18">${todayHours}h</text>
+  
+    <text x="300" y="22" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="13">Longest day</text>
+    <text x="300" y="44" fill="#fde6c2" font-family="Arial, Helvetica, sans-serif" font-size="18">${longestDayHours}h</text>
+  </svg>`;
+  }
+  
 
 /**
  * Build contribution-style 52x7 grid SVG for up to HISTORY_KEEP_DAYS days.
