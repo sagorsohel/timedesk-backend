@@ -1,24 +1,30 @@
 import express from "express";
-
-import { computeStats } from "../utils/stats.js";
+import { computeStats, buildBadgeSVG } from "../utils/stats.js";
 import { UserRoutine } from "../models/routine.model.js";
 
+const badgeRouter = express.Router();
 
-const statsRouter = express.Router();
-
-// GET /api/stats/:userId
-statsRouter.get("/:userId", async (req, res) => {
+badgeRouter.get("/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
     const userRoutine = await UserRoutine.findOne({ userId });
-    if (!userRoutine) return res.status(404).json({ error: "Not found" });
+    if (!userRoutine) return res.status(404).send("Not found");
 
     const stats = computeStats(userRoutine);
-    res.json(stats);
+
+    const svg = buildBadgeSVG(stats);
+
+    res.setHeader("Content-Type", "image/svg+xml");
+    // Disable caching or set appropriate cache-control headers to force fresh fetch
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+
+    res.send(svg);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message });
+    res.status(500).send("Server error");
   }
 });
 
-export default statsRouter;
+export default badgeRouter;
