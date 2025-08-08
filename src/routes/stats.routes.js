@@ -1,11 +1,13 @@
 import express from "express";
-import UserRoutine from "../models/UserRoutine.js";
-import { computeStats } from "../utils/stats.js";
 
-const router = express.Router();
+import { computeStats } from "../utils/stats.js";
+import { UserRoutine } from "../models/routine.model.js";
+
+
+const statsRouter = express.Router();
 
 // GET /api/stats/:userId
-router.get("/:userId", async (req, res) => {
+statsRouter.get("/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
     const userRoutine = await UserRoutine.findOne({ userId });
@@ -19,4 +21,4 @@ router.get("/:userId", async (req, res) => {
   }
 });
 
-export default router;
+export default statsRouter;
