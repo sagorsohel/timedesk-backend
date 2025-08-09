@@ -12,14 +12,17 @@ const HISTORY_KEEP_DAYS = 30; // adjust as needed
 
 async function performDailyReset() {
   console.log("Running daily reset:", new Date().toISOString());
+
   const today = dayjs().utc().format("YYYY-MM-DD");
+  const yesterday = dayjs().utc().subtract(1, "day").format("YYYY-MM-DD");
 
   const cursor = UserRoutine.find().cursor();
   for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
     try {
       if (doc.lastReset === today) continue;
 
-      const routinesSnapshot = (doc.routines || []).map(r => {
+      // Take snapshot of routines *as of yesterday* (completed time for the day that ended)
+      const routinesSnapshot = (doc.routines || []).map((r) => {
         const completed = Math.max(
           0,
           (r.originalDurationSeconds || 0) - (r.remainingSeconds || 0)
@@ -30,33 +33,39 @@ async function performDailyReset() {
           originalDurationSeconds: r.originalDurationSeconds || 0,
           remainingSeconds: r.remainingSeconds || 0,
           completedSeconds: completed,
-          isFinished: r.isFinished || false
+          isFinished: r.isFinished || false,
         };
       });
 
       doc.history = doc.history || [];
+
+      // Push the snapshot with date = yesterday (the day we just finished)
       doc.history.push({
-        date: today,
-        routines: routinesSnapshot
+        date: yesterday,
+        routines: routinesSnapshot,
       });
 
+      // Keep history size limited
       if (doc.history.length > HISTORY_KEEP_DAYS) {
         doc.history = doc.history.slice(doc.history.length - HISTORY_KEEP_DAYS);
       }
 
-      doc.routines = (doc.routines || []).map(r => ({
-        ...r.toObject ? r.toObject() : r,
+      // Reset routines for new day (today)
+      doc.routines = (doc.routines || []).map((r) => ({
+        ...(r.toObject ? r.toObject() : r),
         remainingSeconds: r.originalDurationSeconds || 0,
         isRunning: false,
-        isFinished: false
+        isFinished: false,
       }));
 
+      // Update lastReset to today to prevent double reset in same day
       doc.lastReset = today;
       await doc.save();
     } catch (err) {
       console.error("Error resetting user:", doc._id, err);
     }
   }
+
   console.log("Daily reset done.");
 }
 

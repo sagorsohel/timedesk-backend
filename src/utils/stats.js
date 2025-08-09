@@ -97,31 +97,50 @@ export function computeStats(userRoutine) {
  * Small textual SVG badge
  */
 export function buildBadgeSVG({ totalHours, todayHours, longestDayHours }) {
-    const width = 600;
-    const height = 100;
-    return `<?xml version="1.0" encoding="utf-8"?>
-  <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-    <!-- Background -->
-    <rect width="${width}" height="${height}" rx="10" fill="#e6f4fd"/>
+  const width = 600;
+  const height = 180;
+
+  return `<?xml version="1.0" encoding="utf-8"?>
+    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+      <!-- Background -->
+      <rect width="${width}" height="${height}" rx="8" fill="#1b1b1b" />
   
-    <!-- Vertical separators -->
-    <line x1="200" y1="20" x2="200" y2="80" stroke="#2d4797" stroke-width="1"/>
-    <line x1="400" y1="20" x2="400" y2="80" stroke="#2d4797" stroke-width="1"/>
+      <!-- Heading -->
+      <text x="${width / 2}" y="25" text-anchor="middle" fill="#1ac6ff"
+        font-family="Arial, sans-serif" font-size="20" font-weight="bold">
+        Total Working Progress
+      </text>
   
-    <!-- Total Hours -->
-    <text x="100" y="45" text-anchor="middle" fill="#e2008d" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="bold">${totalHours}h</text>
-    <text x="100" y="65" text-anchor="middle" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="14">Total Hours</text>
+      <!-- Vertical separators -->
+      <line x1="${width / 3}" y1="40" x2="${width / 3}" y2="${
+    height - 20
+  }" stroke="#444" stroke-width="1"/>
+      <line x1="${(width / 3) * 2}" y1="40" x2="${(width / 3) * 2}" y2="${
+    height - 20
+  }" stroke="#444" stroke-width="1"/>
   
-    <!-- Today -->
-    <text x="300" y="45" text-anchor="middle" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="bold">${todayHours}h</text>
-    <text x="300" y="65" text-anchor="middle" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="14">Today</text>
+      <!-- Total Hours -->
+      <text x="${width / 6}" y="75" text-anchor="middle" fill="#1ac6ff"
+        font-family="Arial, sans-serif" font-size="28" font-weight="bold">${totalHours}h</text>
+      <text x="${width / 6}" y="100" text-anchor="middle" fill="#ccc"
+        font-family="Arial, sans-serif" font-size="16">Total Hours</text>
   
-    <!-- Longest Day -->
-    <text x="500" y="45" text-anchor="middle" fill="#fde6c2" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="bold">${longestDayHours}h</text>
-    <text x="500" y="65" text-anchor="middle" fill="#2d4797" font-family="Arial, Helvetica, sans-serif" font-size="14">Longest Day</text>
-  </svg>`;
-  }
+      <!-- Today Circle -->
+      <circle cx="${
+        width / 2
+      }" cy="95" r="60" stroke="#e2008d" stroke-width="4" fill="none"/>
+      <text x="${width / 2}" y="90" text-anchor="middle" fill="#1ac6ff"
+        font-family="Arial, sans-serif" font-size="20" font-weight="bold">${todayHours}h</text>
+      <text x="${width / 2}" y="115" text-anchor="middle" fill="#e2008d"
+        font-family="Arial, sans-serif" font-size="14">Today</text>
   
+      <!-- Longest Day -->
+      <text x="${(width / 6) * 5}" y="75" text-anchor="middle" fill="#1ac6ff"
+        font-family="Arial, sans-serif" font-size="28" font-weight="bold">${longestDayHours}h</text>
+      <text x="${(width / 6) * 5}" y="100" text-anchor="middle" fill="#ccc"
+        font-family="Arial, sans-serif" font-size="16">Longest Day</text>
+    </svg>`;
+}
 
 /**
  * Build contribution-style 52x7 grid SVG for up to HISTORY_KEEP_DAYS days.
