@@ -6,6 +6,7 @@ import authMiddleware from "../middlewares/authMiddleware.js";
 import authRouter from "./auth.routes.js";
 import statsRouter from "./stats.routes.js";
 import badgeRouter from "./badge.route.js";
+import projectRouter from "./project.routes.js";
 
 
 const router = express.Router();
@@ -15,5 +16,6 @@ router.use("/badge", badgeRouter);    // /api/badge/:userId and /api/badge/graph
 router.use("/auth", authRouter);
 router.use("/user", usersRouter);
 router.use("/routines",authMiddleware, routineRouter);
+router.use("/projects",authMiddleware, projectRouter);
 
 export default router;
