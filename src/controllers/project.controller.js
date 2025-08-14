@@ -1,4 +1,5 @@
 import projectModel from "../models/project.model.js";
+import trackingHistoryModel from "../models/trackingHistory.model.js";
 import { sendError, sendSuccess } from "../utils/response.js";
 import dayjs from "dayjs";
 
@@ -142,9 +143,9 @@ export const getProjects = async (req, res) => {
 export const startTracking = async (req, res) => {
     try {
       const { projectId } = req.params;
-      const userId = req.user.id;
+      const user = req.user.id;
   
-      const project = await projectModel.findOne({ _id: projectId, userId });
+      const project = await projectModel.findOne({ _id: projectId, user });
       if (!project) return sendError(res, 404, "Project not found");
   
       if (project.timerStart) return sendError(res, 400, "Timer already running");
@@ -162,9 +163,9 @@ export const startTracking = async (req, res) => {
     try {
       const { projectId } = req.params;
       const { title } = req.body;
-      const userId = req.user.id;
+      const user = req.user.id;
   
-      const project = await projectModel.findOne({ _id: projectId, userId });
+      const project = await projectModel.findOne({ _id: projectId, user });
       if (!project) return sendError(res, 404, "Project not found");
   
       if (!project.timerStart) return sendError(res, 400, "No timer running");
@@ -179,7 +180,7 @@ export const startTracking = async (req, res) => {
   
       await trackingHistoryModel.create({
         projectId,
-        userId,
+        user,
         title,
         startTime,
         endTime,
@@ -197,9 +198,9 @@ export const startTracking = async (req, res) => {
     try {
       const { projectId } = req.params;
       const { date } = req.query;
-      const userId = req.user.id;
+      const user = req.user.id;
   
-      const query = { projectId, userId };
+      const query = { projectId, user };
       if (date) query.date = date;
   
       const history = await trackingHistoryModel.find(query).sort({ startTime: -1 });

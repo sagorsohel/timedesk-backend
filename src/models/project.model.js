@@ -8,8 +8,8 @@ const projectSchema = new mongoose.Schema({
     amount: Number,
     isDone: Boolean,
     timerStart: Date,
-    totalTrackedTime: Number,
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }
+    totalTrackedTime: { type: Number, default: 0 }, // ✅ initialize
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }
   }, { timestamps: true });
   
   export default mongoose.model("Project", projectSchema);
