@@ -1,5 +1,6 @@
 import projectModel from "../models/project.model.js";
 import { sendError, sendSuccess } from "../utils/response.js";
+import dayjs from "dayjs";
 
 /**
  * Create a new project
@@ -141,84 +142,70 @@ export const getProjects = async (req, res) => {
 export const startTracking = async (req, res) => {
     try {
       const { projectId } = req.params;
-      const userId = req.user._id;
+      const userId = req.user.id;
   
       const project = await projectModel.findOne({ _id: projectId, userId });
       if (!project) return sendError(res, 404, "Project not found");
+  
+      if (project.timerStart) return sendError(res, 400, "Timer already running");
   
       project.timerStart = new Date();
       await project.save();
   
-      sendSuccess(res, 200, "Timer started", { timerStart: project.timerStart });
+      sendSuccess(res, 200, "Tracking started", { project });
     } catch (err) {
-      sendError(res, 500, "Error starting timer", { msg: err?.message });
+      sendError(res, 500, "Error starting tracking", { msg: err.message });
     }
   };
   
-
-//   stop tracking
-
-export const stopTracking = async (req, res) => {
+  export const stopTracking = async (req, res) => {
     try {
       const { projectId } = req.params;
       const { title } = req.body;
-      const userId = req.user._id;
+      const userId = req.user.id;
   
       const project = await projectModel.findOne({ _id: projectId, userId });
       if (!project) return sendError(res, 404, "Project not found");
   
-      if (!project.timerStart) return sendError(res, 400, "Timer not started");
+      if (!project.timerStart) return sendError(res, 400, "No timer running");
   
+      const startTime = project.timerStart;
       const endTime = new Date();
-      const duration = Math.floor((endTime - project.timerStart) / 1000); // in seconds
+      const duration = Math.floor((endTime - startTime) / 1000);
   
-      // Push to timeLogs
-      project.timeLogs.push({
-        title,
-        date: new Date(),
-        duration,
-        startedAt: project.timerStart,
-        endedAt: endTime,
-      });
-  
-      // Update totalTrackedTime
       project.totalTrackedTime += duration;
-  
-      // Reset timerStart
       project.timerStart = null;
-  
       await project.save();
   
-      sendSuccess(res, 200, "Timer stopped and saved", { project });
+      await trackingHistoryModel.create({
+        projectId,
+        userId,
+        title,
+        startTime,
+        endTime,
+        duration,
+        date: dayjs(startTime).format("YYYY-MM-DD"),
+      });
+  
+      sendSuccess(res, 200, "Tracking stopped & history saved", { project });
     } catch (err) {
-      sendError(res, 500, "Error stopping timer", { msg: err?.message });
+      sendError(res, 500, "Error stopping tracking", { msg: err.message });
     }
   };
-
   
-//   get history 
-export const getProjectHistory = async (req, res) => {
+  export const getProjectHistory = async (req, res) => {
     try {
       const { projectId } = req.params;
-      const { date } = req.query; // optional YYYY-MM-DD
-      const userId = req.user._id;
+      const { date } = req.query;
+      const userId = req.user.id;
   
-      const project = await projectModel.findOne({ _id: projectId, userId });
-      if (!project) return sendError(res, 404, "Project not found");
+      const query = { projectId, userId };
+      if (date) query.date = date;
   
-      let logs = project.timeLogs;
+      const history = await trackingHistoryModel.find(query).sort({ startTime: -1 });
   
-      if (date) {
-        const start = new Date(date);
-        const end = new Date(date);
-        end.setHours(23, 59, 59, 999);
-  
-        logs = logs.filter(log => log.date >= start && log.date <= end);
-      }
-  
-      sendSuccess(res, 200, "History fetched", { logs });
+      sendSuccess(res, 200, "History fetched successfully", { history });
     } catch (err) {
-      sendError(res, 500, "Error fetching history", { msg: err?.message });
+      sendError(res, 500, "Error fetching history", { msg: err.message });
     }
   };
-  
