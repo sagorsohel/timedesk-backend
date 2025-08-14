@@ -8,7 +8,7 @@ const projectSchema = new mongoose.Schema(
     tags: [{ type: String }],
     amount: { type: Number, default: 0 },
     isDone: { type: Boolean, default: false },
-   
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     timerStart: { type: Date, default: null },
     totalTrackedTime: { type: Number, default: 0 }, // in milliseconds
   },
