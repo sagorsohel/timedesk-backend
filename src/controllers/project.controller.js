@@ -135,3 +135,90 @@ export const getProjects = async (req, res) => {
     }
   };
   
+
+
+// start tracking time 
+export const startTracking = async (req, res) => {
+    try {
+      const { projectId } = req.params;
+      const userId = req.user._id;
+  
+      const project = await projectModel.findOne({ _id: projectId, userId });
+      if (!project) return sendError(res, 404, "Project not found");
+  
+      project.timerStart = new Date();
+      await project.save();
+  
+      sendSuccess(res, 200, "Timer started", { timerStart: project.timerStart });
+    } catch (err) {
+      sendError(res, 500, "Error starting timer", { msg: err?.message });
+    }
+  };
+  
+
+//   stop tracking
+
+export const stopTracking = async (req, res) => {
+    try {
+      const { projectId } = req.params;
+      const { title } = req.body;
+      const userId = req.user._id;
+  
+      const project = await projectModel.findOne({ _id: projectId, userId });
+      if (!project) return sendError(res, 404, "Project not found");
+  
+      if (!project.timerStart) return sendError(res, 400, "Timer not started");
+  
+      const endTime = new Date();
+      const duration = Math.floor((endTime - project.timerStart) / 1000); // in seconds
+  
+      // Push to timeLogs
+      project.timeLogs.push({
+        title,
+        date: new Date(),
+        duration,
+        startedAt: project.timerStart,
+        endedAt: endTime,
+      });
+  
+      // Update totalTrackedTime
+      project.totalTrackedTime += duration;
+  
+      // Reset timerStart
+      project.timerStart = null;
+  
+      await project.save();
+  
+      sendSuccess(res, 200, "Timer stopped and saved", { project });
+    } catch (err) {
+      sendError(res, 500, "Error stopping timer", { msg: err?.message });
+    }
+  };
+
+  
+//   get history 
+export const getProjectHistory = async (req, res) => {
+    try {
+      const { projectId } = req.params;
+      const { date } = req.query; // optional YYYY-MM-DD
+      const userId = req.user._id;
+  
+      const project = await projectModel.findOne({ _id: projectId, userId });
+      if (!project) return sendError(res, 404, "Project not found");
+  
+      let logs = project.timeLogs;
+  
+      if (date) {
+        const start = new Date(date);
+        const end = new Date(date);
+        end.setHours(23, 59, 59, 999);
+  
+        logs = logs.filter(log => log.date >= start && log.date <= end);
+      }
+  
+      sendSuccess(res, 200, "History fetched", { logs });
+    } catch (err) {
+      sendError(res, 500, "Error fetching history", { msg: err?.message });
+    }
+  };
+  
